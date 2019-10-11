@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 ﻿{"cameraMode":{"drawMode":0,"name":"Shaded","section":"Shading Mode"},"sceneLighting":true,"audioPlay":false,"sceneViewState":{"showFog":true,"showMaterialUpdate":false,"showSkybox":true,"showFlares":true,"showImageEffects":true,"showParticleSystems":true},"in2DMode":true,"pivot":{"x":12.193666458129883,"y":-1.8609920740127564,"z":-19.24609375},"rotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"size":32.63444900512695,"orthographic":true}
+=======
+﻿{"cameraMode":{"drawMode":0,"name":"Shaded","section":"Shading Mode"},"sceneLighting":true,"audioPlay":false,"sceneViewState":{"showFog":true,"showMaterialUpdate":false,"showSkybox":true,"showFlares":true,"showImageEffects":true,"showParticleSystems":true},"in2DMode":true,"pivot":{"x":-7.432891845703125,"y":0.7097700238227844,"z":-12.841796875},"rotation":{"x":0.0,"y":0.0,"z":0.0,"w":1.0},"size":12.570841789245606,"orthographic":true}
+>>>>>>> Alewa
