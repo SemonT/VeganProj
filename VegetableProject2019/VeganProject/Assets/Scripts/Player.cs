@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float jumpForce = 100;
-    public float speed = 5;
+    public float jumpForce = 20f;
+    public float speed = 10f;
+    float jumpCooldown = 1f;
+    float jumpTimer = 0;
     bool dir = false;
 
     static Player m_instance;
     Rigidbody2D m_rigidbody;
-    Transform RCSParentTransform; // Используется только при инициализации (RCS - Ray Cast Source)
-    Transform RCSGroundTransform;
+    Attack m_attack;
+    Transform m_RCSGroundTransform;
+    GameObject interactionObject;
 
     // Вызов до старта
     private void Awake()
@@ -26,8 +29,11 @@ public class Player : MonoBehaviour
     void Start()
     {
         m_rigidbody = GetComponent<Rigidbody2D>();
-        RCSParentTransform = transform.Find("RayCastSources");
-        RCSGroundTransform = RCSParentTransform.Find("Ground");
+
+        m_attack = GetComponent<Attack>();
+
+        Transform RCSParentTransform = transform.Find("RayCastSources");
+        m_RCSGroundTransform = RCSParentTransform.Find("Ground");
     }
 
     // Обращение к объекту этого класса
@@ -37,8 +43,11 @@ public class Player : MonoBehaviour
     }
 
     // Вызывается каждый кадр с параметрами ввода пользователя
-    public void input(float horisontal, bool space)
+    public void input(float horisontal, float vertical, bool space)
     {
+        // Обновление таймеров
+        if (jumpTimer > 0) jumpTimer -= Time.deltaTime;
+
         // Ходьба
         transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.right * horisontal, speed * Time.deltaTime);
 
@@ -53,18 +62,43 @@ public class Player : MonoBehaviour
         }
 
         // Прыжки
-        Debug.DrawLine(RCSGroundTransform.position, RCSGroundTransform.position - transform.up * RCSGroundTransform.localScale.y, Color.green, Time.deltaTime); // Визуализация рейкаста
-        RaycastHit2D hit = Physics2D.Raycast(RCSGroundTransform.position, -RCSGroundTransform.up, RCSGroundTransform.localScale.x);
+        Debug.DrawLine(m_RCSGroundTransform.position, m_RCSGroundTransform.position - transform.up * m_RCSGroundTransform.localScale.y, Color.green, Time.deltaTime); // Визуализация рейкаста
+        RaycastHit2D hit = Physics2D.Raycast(m_RCSGroundTransform.position, -m_RCSGroundTransform.up, m_RCSGroundTransform.localScale.x);
         if (hit.collider && hit.collider.gameObject.GetComponent<PlatformEffector2D>())
         {
-            if (space)
+            if (vertical > 0 && jumpTimer <= 0)
             {
                 m_rigidbody.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+                jumpTimer = jumpCooldown;
+            }
+        }
+
+        // Атака
+        m_attack?.input(space);
+
+        if (vertical < 0 && interactionObject)
+        {
+            Weapon weap = interactionObject.GetComponent<Weapon>();
+            if (weap)
+            {
+                m_attack.dropWeapon();
+                m_attack.pickUpWeapon(interactionObject.GetComponent<Weapon>());
             }
         }
     }
 
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!interactionObject)
+        {
+            interactionObject = collision.gameObject;
+        }
+    }
 
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        interactionObject = null;
+    }
 
     // Вызов при уничтожении объектов этого класса
     private void OnDestroy()
