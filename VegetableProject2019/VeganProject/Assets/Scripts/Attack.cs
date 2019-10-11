@@ -18,7 +18,7 @@ public class Attack : MonoBehaviour
     float damageDealerCooldown;
     float damageDealerTimer = 0;
 
-    // Инициализация оружия
+    // Инициализация оружия при подборе
     public void pickUpWeapon(Weapon weapon)
     {
         m_weaponScript = weapon;
@@ -36,6 +36,7 @@ public class Attack : MonoBehaviour
         }
     }
 
+    // Выбрасывание оружия
     public void dropWeapon()
     {
         if (m_weapon) m_weapon.transform.eulerAngles = new Vector3(0, 0, 0);
@@ -46,7 +47,8 @@ public class Attack : MonoBehaviour
         m_animType = "Attack";
         damageDealerCooldown = 0;
     }
-    
+
+    // Вызывается каждый кадр с параметрами ввода пользователя
     public void input(bool space)
     {
         if (m_weapon)
@@ -63,7 +65,7 @@ public class Attack : MonoBehaviour
             m_weapon.transform.position = m_attachPointTransform.position + m_weapon.transform.position - m_weaponHandleTransform.position;
             Vector3 relativePos = m_attachPointTransform.position - m_guidePointTransform.position;
             m_weapon.transform.rotation = Quaternion.LookRotation(Vector3.Cross(relativePos, -m_attachPointTransform.transform.up), relativePos);
-            Debug.DrawLine(m_weaponHandleTransform.position, m_weaponHandleTransform.position + relativePos, Color.blue, Time.deltaTime); // Визуализация направления оружия
+            Debug.DrawLine(m_guidePointTransform.position, m_attachPointTransform.position, Color.blue, Time.deltaTime); // Визуализация направления оружия
             // Атака при нажатии на кнопку
             if (space)
             {

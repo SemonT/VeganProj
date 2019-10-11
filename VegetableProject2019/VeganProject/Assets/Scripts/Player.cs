@@ -76,6 +76,7 @@ public class Player : MonoBehaviour
         // Атака
         m_attack?.input(space);
 
+        // Подбирание предметов
         if (vertical < 0 && interactionObject)
         {
             Weapon weap = interactionObject.GetComponent<Weapon>();
@@ -87,6 +88,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Для взаимодействия с другими объектами
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (!interactionObject)
@@ -95,6 +97,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    // Для невозможности воздействия с предметами издалека
     void OnTriggerExit2D(Collider2D collision)
     {
         interactionObject = null;

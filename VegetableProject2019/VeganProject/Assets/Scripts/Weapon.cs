@@ -6,6 +6,7 @@ public class Weapon : MonoBehaviour
 {
     public string WeaponType;
 
+    // Получение типа оружия для определения анимации
     public string GetWeaponType()
     {
         return WeaponType;

@@ -7,6 +7,7 @@ public class DamageDealer : MonoBehaviour
     public int damage = 1;
     public bool isActive = false;
 
+    // Нанесение урона объектам со здоровьем
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (isActive)
