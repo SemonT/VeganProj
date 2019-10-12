@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    // Служебные переменные
     public string WeaponType;
 
     // Получение типа оружия для определения анимации
@@ -11,6 +12,7 @@ public class Weapon : MonoBehaviour
     {
         return WeaponType;
     }
+
     // Запуск при старте
     void Start()
     {

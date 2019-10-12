@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class GameSystem : MonoBehaviour
 {
+    // Параметры
+    public Camera mainCamera;
+
     // Служеблые переменные
     Player playerScript; // Скрипт игрока
-    public Camera mainCamera;
 
     // Вызов при старте
     void Start()
