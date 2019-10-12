@@ -60,7 +60,12 @@ public class Attack : MonoBehaviour
                 m_weaponDamageDealer.isActive = false;
             }
             // Крепление оружия к рукам
-            m_weapon.transform.position = m_attachPointTransform.position + m_weapon.transform.position - m_weaponHandleTransform.position;
+            m_weapon.transform.position = new Vector3(
+                m_attachPointTransform.position.x + m_weapon.transform.position.x - m_weaponHandleTransform.position.x,
+                m_attachPointTransform.position.y + m_weapon.transform.position.y - m_weaponHandleTransform.position.y,
+                (m_attachPointTransform.position.z + m_guidePointTransform.position.z) / 2f
+                );
+
             Vector3 relativePos = m_attachPointTransform.position - m_guidePointTransform.position;
             m_weapon.transform.rotation = Quaternion.LookRotation(Vector3.Cross(relativePos, -m_attachPointTransform.transform.up), relativePos);
             Debug.DrawLine(m_guidePointTransform.position, m_attachPointTransform.position, Color.blue, Time.deltaTime); // Визуализация направления оружия

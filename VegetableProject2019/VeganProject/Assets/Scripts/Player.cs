@@ -36,6 +36,7 @@ public class Player : MonoBehaviour
 
         Transform RCSParentTransform = transform.Find("RayCastSources");
         m_RCSGroundTransform = RCSParentTransform.Find("Ground");
+        print(m_RCSGroundTransform);
     }
 
     // Обращение к объекту этого класса
