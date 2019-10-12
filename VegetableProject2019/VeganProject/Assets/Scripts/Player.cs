@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    // Параметры
     public float jumpForce = 20f;
     public float speed = 10f;
-    float jumpCooldown = 1f;
-    float jumpTimer = 0;
-    bool dir = false;
-
+    
+    // Служебные переменные
     static Player m_instance;
     Rigidbody2D m_rigidbody;
     Attack m_attack;
     Transform m_RCSGroundTransform;
     GameObject interactionObject;
+    bool dir = false;
+    float jumpCooldown = 1f;
+    float jumpTimer = 0;
 
     // Вызов до старта
     private void Awake()

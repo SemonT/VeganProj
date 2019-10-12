@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
+    // Служебные переменные
     Transform m_attachPointTransform;
     Transform m_guidePointTransform;
     Animator m_animator;
 
-    Weapon m_weaponScript;
     GameObject m_weapon;
     Transform m_weaponHandleTransform;
     DamageDealer m_weaponDamageDealer;
@@ -21,7 +21,6 @@ public class Attack : MonoBehaviour
     // Инициализация оружия при подборе
     public void pickUpWeapon(Weapon weapon)
     {
-        m_weaponScript = weapon;
         m_weapon = weapon.gameObject;
         m_weaponHandleTransform = m_weapon.transform.Find("Handle");
         m_weaponDamageDealer = m_weapon.transform.Find("DamageDealer").gameObject.GetComponent<DamageDealer>();
@@ -40,7 +39,6 @@ public class Attack : MonoBehaviour
     public void dropWeapon()
     {
         if (m_weapon) m_weapon.transform.eulerAngles = new Vector3(0, 0, 0);
-        m_weaponScript = null;
         m_weapon = null;
         m_weaponHandleTransform = null;
         m_weaponDamageDealer = null;
