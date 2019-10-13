@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
         {
             m_instance = this;
         }
+        DontDestroyOnLoad(gameObject);
     }
 
     // Вызов при старте
@@ -35,11 +36,12 @@ public class Player : MonoBehaviour
         m_attack = GetComponent<Attack>();
 
         Transform RCSParentTransform = transform.Find("RayCastSources");
-        m_RCSGroundTransform = RCSParentTransform.Find("Ground");
-        print(m_RCSGroundTransform);
+        if (RCSParentTransform) {
+            m_RCSGroundTransform = RCSParentTransform.Find("Ground");
+        }
     }
 
-    // Обращение к объекту этого класса
+    // Обращение к единственному объекту этого класса
     public static Player GetInstance()
     {
         return m_instance;

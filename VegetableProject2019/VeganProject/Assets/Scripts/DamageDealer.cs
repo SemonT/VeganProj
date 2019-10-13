@@ -11,6 +11,12 @@ public class DamageDealer : MonoBehaviour
     // Служебные переменные
     Collider2D m_collider;
 
+    // Запускается при старте
+    void Start()
+    {
+
+    }
+
     // Нанесение урона объектам со здоровьем
     void OnTriggerStay2D(Collider2D collision)
     {
@@ -25,7 +31,7 @@ public class DamageDealer : MonoBehaviour
                 Vector3 dir = otherPos - thisPos;
                 RaycastHit2D[] results = new RaycastHit2D[1];
                 ContactFilter2D filter = new ContactFilter2D();
-                filter.useTriggers = true;
+                filter.useTriggers = false;
                 Physics2D.Raycast(thisPos, dir, filter, results);
                 RaycastHit2D hit = results[0];
                 // Вызов функции нанесения урона
@@ -38,11 +44,5 @@ public class DamageDealer : MonoBehaviour
                 isActive = false;
             }
         }
-    }
-
-    // Запускается при старте
-    void Start()
-    {
-        
     }
 }

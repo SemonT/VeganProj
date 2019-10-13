@@ -18,7 +18,18 @@ public class Attack : MonoBehaviour
     float damageDealerCooldown;
     float damageDealerTimer = 0;
 
-    // Инициализация оружия при подборе
+    // Запускается при старте
+    void Start()
+    {
+        Transform armsTransform = transform.Find("Arms");
+        m_attachPointTransform = armsTransform.Find("AttachPoint");
+        m_guidePointTransform = armsTransform.Find("GuidePoint");
+
+        m_animator = GetComponent<Animator>();
+        clips = m_animator.runtimeAnimatorController.animationClips;
+    }
+
+    // Инициализация параметров анимации и оружия при его подборе
     public void pickUpWeapon(Weapon weapon)
     {
         m_weapon = weapon.gameObject;
@@ -77,16 +88,5 @@ public class Attack : MonoBehaviour
                 damageDealerTimer = damageDealerCooldown;
             }
         }
-    }
-
-    // Запускается при старте
-    void Start()
-    {
-        Transform armsTransform = transform.Find("Arms");
-        m_attachPointTransform = armsTransform.Find("AttachPoint");
-        m_guidePointTransform = armsTransform.Find("GuidePoint");
-
-        m_animator = GetComponent<Animator>();
-        clips = m_animator.runtimeAnimatorController.animationClips;
     }
 }
