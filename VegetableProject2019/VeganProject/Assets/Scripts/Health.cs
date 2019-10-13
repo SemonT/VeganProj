@@ -32,7 +32,7 @@ public class Health : MonoBehaviour
         {
             hpBar = m_playerHpBar;
             hpText = m_playerHpText;
-            hpText.text = maxHealth.ToString();
+            if (hpText) hpText.text = maxHealth.ToString();
         }
         health = maxHealth;
 
@@ -127,9 +127,6 @@ public class Health : MonoBehaviour
             nearest.position = new Vector3(nearest.position.x, nearest.position.y, nearest.position.z - 1);
             tearPiece(nearest.gameObject);
 
-            slicesTransforms.Remove(nearest);
-            Destroy(nearest.gameObject, 5);
-
             position = nearest.position;
         }
         else
@@ -143,12 +140,19 @@ public class Health : MonoBehaviour
     void tearPiece(GameObject piece)
     {
         Rigidbody2D nearestRigidBody = piece.GetComponent<Rigidbody2D>();
+
+        piece.transform.parent = null;
         if (!nearestRigidBody)
         {
             nearestRigidBody = piece.AddComponent<Rigidbody2D>();
         }
         nearestRigidBody.gravityScale = slicesGravity;
         nearestRigidBody.AddForce(Random.insideUnitCircle.normalized * slicesScatter, ForceMode2D.Impulse);
+        slicesTransforms.Remove(piece.transform);
+
+        
+
+        Destroy(piece, deathTime);
     }
 
     // Нанесение урона / лечение
@@ -176,7 +180,6 @@ public class Health : MonoBehaviour
         {
             hpText.text = health.ToString();
         }
-        print(health);
     }
 
     // Смерть персонажа
@@ -186,9 +189,10 @@ public class Health : MonoBehaviour
         gameObject.GetComponentsInChildren(false, objectsTransforms);
         foreach (Transform objectTransform in objectsTransforms)
         {
-            objectTransform.parent = null;
             tearPiece(objectTransform.gameObject);
         }
-        Destroy(gameObject, deathTime);
+        //Animator animator = GetComponent<Animator>();
+        //if (animator) animator.enabled = false;
+        Destroy(gameObject);
     }
 }

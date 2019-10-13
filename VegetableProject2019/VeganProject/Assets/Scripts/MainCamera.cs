@@ -10,7 +10,6 @@ public class MainCamera : MonoBehaviour
     // Вызывается при старте
     private void Start()
     {
-        print("awake");
         if (!m_instance)
         {
             m_instance = this;

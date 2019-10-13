@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     Attack m_attack;
     Transform m_RCSGroundTransform;
     GameObject interactionObject;
+    Animator m_animator;
     bool dir = false;
     float jumpCooldown = 1f;
     float jumpTimer = 0;
@@ -39,6 +40,8 @@ public class Player : MonoBehaviour
         if (RCSParentTransform) {
             m_RCSGroundTransform = RCSParentTransform.Find("Ground");
         }
+
+        m_animator = GetComponent<Animator>();
     }
 
     // Обращение к единственному объекту этого класса
@@ -55,6 +58,16 @@ public class Player : MonoBehaviour
 
         // Ходьба
         transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.right * horisontal, speed * Time.deltaTime);
+
+        // Говнокод begin
+        float anim_param;
+        if (horisontal == 0)
+            anim_param = -1;
+        else
+            anim_param = 1;
+
+        m_animator.SetFloat("State", anim_param);
+        // Говнокод end
 
         // Поворот
         if (horisontal != 0)
@@ -89,6 +102,7 @@ public class Player : MonoBehaviour
             {
                 m_attack.dropWeapon();
                 m_attack.pickUpWeapon(interactionObject.GetComponent<Weapon>());
+                weap.SetPicked(true);
             }
         }
     }

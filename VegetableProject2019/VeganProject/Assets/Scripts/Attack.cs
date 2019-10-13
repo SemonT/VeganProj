@@ -18,6 +18,8 @@ public class Attack : MonoBehaviour
     float damageDealerCooldown;
     float damageDealerTimer = 0;
 
+    bool isAttacking = false;
+
     // Запускается при старте
     void Start()
     {
@@ -68,6 +70,7 @@ public class Attack : MonoBehaviour
             }
             else
             {
+                isAttacking = false;
                 m_weaponDamageDealer.isActive = false;
             }
             // Крепление оружия к рукам
@@ -81,9 +84,10 @@ public class Attack : MonoBehaviour
             m_weapon.transform.rotation = Quaternion.LookRotation(Vector3.Cross(relativePos, -m_attachPointTransform.transform.up), relativePos);
             Debug.DrawLine(m_guidePointTransform.position, m_attachPointTransform.position, Color.blue, Time.deltaTime); // Визуализация направления оружия
             // Атака при нажатии на кнопку
-            if (space)
+            if (space && !isAttacking)
             {
                 m_animator.SetTrigger(m_animType);
+                isAttacking = true;
                 m_weaponDamageDealer.isActive = true;
                 damageDealerTimer = damageDealerCooldown;
             }

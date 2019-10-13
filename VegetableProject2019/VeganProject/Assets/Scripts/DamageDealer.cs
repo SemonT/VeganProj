@@ -41,8 +41,8 @@ public class DamageDealer : MonoBehaviour
                     Debug.DrawLine(hit.point, otherPos, Color.red, 3);// Визуализация рейкаста внутри коллайдера
                     health.addDamage(damage, hit.point);
                 }
-                isActive = false;
             }
+            isActive = false;
         }
     }
 }
