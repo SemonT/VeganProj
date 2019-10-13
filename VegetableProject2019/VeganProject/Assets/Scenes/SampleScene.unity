@@ -170,7 +170,7 @@ PrefabInstance:
     - target: {fileID: 4827748817918231857, guid: f64f54fb9671d8e4da0de53af9574602,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4827748817918231857, guid: f64f54fb9671d8e4da0de53af9574602,
         type: 3}
@@ -270,7 +270,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &910850653
 PrefabInstance:
@@ -322,7 +322,7 @@ PrefabInstance:
     - target: {fileID: 4184922763527548385, guid: ac227fe804744f844b294a458135ab3c,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4184922763527548385, guid: ac227fe804744f844b294a458135ab3c,
         type: 3}
@@ -371,6 +371,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 519420031}
+  bleedPrefab: {fileID: 2269164465165168025, guid: 4ef3feecb7811c64c96bdb41c6f68eeb,
+    type: 3}
+  piesesPrefab: {fileID: 2124460941022950870, guid: c42b7d945654f2c4c9f7d3b5cc282308,
+    type: 3}
 --- !u!4 &1930245971
 Transform:
   m_ObjectHideFlags: 0
@@ -383,7 +387,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2039407916677650523
 PrefabInstance:
@@ -435,7 +439,7 @@ PrefabInstance:
     - target: {fileID: 306553038511908068, guid: 80c16e197c1c74f48a70c7a10d2f0b1d,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 306553038511908068, guid: 80c16e197c1c74f48a70c7a10d2f0b1d,
         type: 3}

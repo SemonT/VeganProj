@@ -11,6 +11,12 @@ public class DamageDealer : MonoBehaviour
     // Служебные переменные
     Collider2D m_collider;
 
+    // Запускается при старте
+    void Start()
+    {
+
+    }
+
     // Нанесение урона объектам со здоровьем
     void OnTriggerStay2D(Collider2D collision)
     {
@@ -38,11 +44,5 @@ public class DamageDealer : MonoBehaviour
                 isActive = false;
             }
         }
-    }
-
-    // Запускается при старте
-    void Start()
-    {
-        
     }
 }

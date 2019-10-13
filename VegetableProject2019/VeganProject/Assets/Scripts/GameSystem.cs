@@ -6,22 +6,25 @@ public class GameSystem : MonoBehaviour
 {
     // Параметры
     public Camera mainCamera;
+    public GameObject bleedPrefab;
+    public GameObject piesesPrefab;
 
     // Служеблые переменные
-    Player playerScript; // Скрипт игрока
+    Player player; // Скрипт игрока
 
     // Вызов при старте
     void Start()
     {
-        playerScript = Player.GetInstance();
+        player = Player.GetInstance();
+        Health.SetPrefabs(bleedPrefab, piesesPrefab);
     }
 
     // Вызов каждый кадр
     void Update()
     {
         // Преследование камеры
-        mainCamera.transform.position = new Vector3(playerScript.gameObject.transform.position.x, playerScript.gameObject.transform.position.y, -10);
+        mainCamera.transform.position = new Vector3(player.gameObject.transform.position.x, player.gameObject.transform.position.y, -10);
         // Передача параметров ввода игровому персонажу
-        playerScript.input(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), Input.GetKeyDown(KeyCode.Space));
+        player.input(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), Input.GetKeyDown(KeyCode.Space));
     }
 }
