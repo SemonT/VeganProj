@@ -54,9 +54,11 @@ public class Attack : MonoBehaviour
         if (m_weapon) m_weapon.transform.eulerAngles = new Vector3(0, 0, 0);
         m_weapon = null;
         m_weaponHandleTransform = null;
+        if (m_weaponDamageDealer) m_weaponDamageDealer.isActive = false;
         m_weaponDamageDealer = null;
         m_animType = "Attack";
         damageDealerCooldown = 0;
+        damageDealerTimer = 0;
     }
 
     // Вызывается каждый кадр с параметрами ввода пользователя
@@ -92,5 +94,10 @@ public class Attack : MonoBehaviour
                 damageDealerTimer = damageDealerCooldown;
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        dropWeapon();
     }
 }

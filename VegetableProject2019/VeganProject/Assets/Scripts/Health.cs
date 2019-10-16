@@ -10,9 +10,7 @@ public class Health : MonoBehaviour
     public float deathTime = 5;
     [ColorUsage(true, true)] public Color juiceColor;
     public float bleedIntencity = 1;
-    public float slicesGravity = 10;
-    public float slicesScatter = 20;
-
+    
     // Служебные переменные
     int health;
     List<Transform> slicesTransforms;
@@ -20,6 +18,9 @@ public class Health : MonoBehaviour
     Texture2D texture;
     static GameObject m_bleedPrefab;
     static GameObject m_piesesPrefab;
+    static float m_slicesGravity;
+    static float m_slicesScatter;
+    static float m_slicesScale;
     static Image m_playerHpBar;
     static Text m_playerHpText;
     Image hpBar;
@@ -56,10 +57,13 @@ public class Health : MonoBehaviour
     }
 
     // Инициализация префабов эффектов
-    public static void Set(GameObject bleedPrefab, GameObject piesesPrefab, Image playerHpBar, Text playerHpText)
+    public static void Set(GameObject bleedPrefab, GameObject piesesPrefab, float slicesGravity, float slicesScatter, float slicesScale, Image playerHpBar, Text playerHpText)
     {
         m_bleedPrefab = bleedPrefab;
         m_piesesPrefab = piesesPrefab;
+        m_slicesGravity = slicesGravity;
+        m_slicesScatter = slicesScatter;
+        m_slicesScale = slicesScale;
         m_playerHpBar = playerHpBar;
         m_playerHpText = playerHpText;
     }
@@ -142,12 +146,13 @@ public class Health : MonoBehaviour
         Rigidbody2D nearestRigidBody = piece.GetComponent<Rigidbody2D>();
 
         piece.transform.parent = null;
+        piece.transform.localScale = piece.transform.localScale * m_slicesScale;
         if (!nearestRigidBody)
         {
             nearestRigidBody = piece.AddComponent<Rigidbody2D>();
         }
-        nearestRigidBody.gravityScale = slicesGravity;
-        nearestRigidBody.AddForce(Random.insideUnitCircle.normalized * slicesScatter, ForceMode2D.Impulse);
+        nearestRigidBody.gravityScale = m_slicesGravity;
+        nearestRigidBody.AddForce(Random.insideUnitCircle.normalized * m_slicesScatter, ForceMode2D.Impulse);
         slicesTransforms.Remove(piece.transform);
 
         
@@ -187,12 +192,10 @@ public class Health : MonoBehaviour
     {
         List<Transform> objectsTransforms = new List<Transform>();
         gameObject.GetComponentsInChildren(false, objectsTransforms);
-        foreach (Transform objectTransform in objectsTransforms)
+        for (int i = objectsTransforms.Count - 1; i >= 0; i--)
         {
-            tearPiece(objectTransform.gameObject);
+            tearPiece(objectsTransforms[i].gameObject);
         }
-        //Animator animator = GetComponent<Animator>();
-        //if (animator) animator.enabled = false;
         Destroy(gameObject);
     }
 }

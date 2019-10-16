@@ -490,7 +490,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 306553038343406562}
   m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: -6.19, z: 0}
+  m_LocalPosition: {x: 0, y: -4.88, z: 0}
   m_LocalScale: {x: 1, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 306553039100833965}
@@ -511,7 +511,6 @@ GameObject:
   - component: {fileID: 306553038511908094}
   - component: {fileID: 2754797956427250254}
   - component: {fileID: 7000763024882411878}
-  - component: {fileID: 2039407915051581692}
   - component: {fileID: 206395100903107565}
   m_Layer: 0
   m_Name: Tomatos
@@ -566,7 +565,7 @@ CircleCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 306553038511908093}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -619,8 +618,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -3.07}
-  m_Size: {x: 2, y: 3.66}
+  m_Offset: {x: 0.42, y: -1.78}
+  m_Size: {x: 4.13, y: 5.74}
   m_Direction: 0
 --- !u!114 &7000763024882411878
 MonoBehaviour:
@@ -634,57 +633,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b9f95e3b9107e4380d06b65894fca4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHealth: 100
+  deathTime: 5
   juiceColor: {r: 0.735849, g: 0, b: 0, a: 1}
   bleedIntencity: 1
---- !u!212 &2039407915051581692
-SpriteRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 306553038511908093}
-  m_Enabled: 0
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 0
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e216277c355fab24f946a88dfd10e629, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
-  m_FlipY: 0
-  m_DrawMode: 0
-  m_Size: {x: 2.27, y: 2.22}
-  m_AdaptiveModeThreshold: 0.5
-  m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
 --- !u!114 &206395100903107565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -697,8 +649,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea12296de3e0b6848b121afacd11b74a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  jumpForce: 10
+  jump: 10
   speed: 7
   view_distance: 65
 --- !u!1 &306553038546065384
@@ -2424,7 +2375,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6527994136881355331}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.98, y: 0.99, z: 0}
+  m_LocalPosition: {x: -0.98, y: 0.81, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 306553039100833965}
@@ -2535,7 +2486,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7130350957373862957}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.41, y: -1.7, z: 0}
+  m_LocalPosition: {x: -1.75, y: -1.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 306553039100833965}

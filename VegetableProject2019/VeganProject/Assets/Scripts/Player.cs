@@ -129,5 +129,6 @@ public class Player : MonoBehaviour
         {
             m_instance = null;
         }
+        GameSystem.GetInstance().LoadLevel("MainMenu");
     }
 }
