@@ -7,9 +7,9 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour
 {
     // Параметры
-    public GameObject target;
+    //public GameObject target;
 
-    //[SerializeField] float jumpForce = 10f;
+    [SerializeField] float jump = 12f;
     [SerializeField] float speed = 7f;
     [SerializeField] float view_distance = 65f;
 
@@ -26,17 +26,21 @@ public class EnemyAI : MonoBehaviour
 
     bool dir = false;
     float dur = 1;
-    //float jumpCooldown = 1f;
-    //float jumpTimer = 0;
+    float jumpCooldown = 1f;
+    float jumpTimer = 0;
 
     void Start()
     {
-//      m_rigidbody = GetComponent<Rigidbody2D>();
+        m_rigidbody = GetComponent<Rigidbody2D>();
 
         m_animator = GetComponent<Animator>();
         m_attack = GetComponent<Attack>();
 
         Transform RCSParentTransform = transform.Find("RayCastSources");
+        if (RCSParentTransform)
+        {
+            m_RCSGroundTransform = RCSParentTransform.Find("Ground");
+        }
 
         m_TopEye = RCSParentTransform.Find("FrontEyesTop");
         m_BottomEye = RCSParentTransform.Find("FrontEyesBottom");
@@ -47,16 +51,22 @@ public class EnemyAI : MonoBehaviour
     // Вызывается каждый кадр с параметрами 
     void MoveHorizontal(GameObject target)
     {
+        if (jumpTimer > 0) jumpTimer -= Time.deltaTime;
         float delta = transform.position.x - target.transform.position.x;
+        float deltaY = transform.position.y - target.transform.position.y;
+
+        if (Mathf.Abs(deltaY) > 3f && jumpTimer <= 0) MoveVertical(deltaY);
+        
+
 
         m_animator.SetFloat("Move", Mathf.Abs(delta));
 
-        //print("Дельта " + Mathf.Abs(delta));
+     //   print("ДельтаY " + Mathf.Abs(deltaY));
 
         if(Mathf.Abs(delta) < 12f && Mathf.Abs(delta) > 2f)
         {
             //print("Атакую ");
-            m_attack.input(true);
+            m_attack.input(0f, true);
         }
         
 
@@ -76,6 +86,24 @@ public class EnemyAI : MonoBehaviour
             horiz_axis = (transform.position - target.transform.position).normalized;
         }
         transform.position = Vector2.MoveTowards(transform.position, transform.position + horiz_axis, speed * Time.deltaTime);
+    }
+
+
+    void MoveVertical(float deltaY)
+    {
+        // Прыжки
+        Debug.DrawLine(m_RCSGroundTransform.position, m_RCSGroundTransform.position - transform.up * m_RCSGroundTransform.localScale.y, Color.green, Time.deltaTime); // Визуализация рейкаста
+        RaycastHit2D hit = Physics2D.Raycast(m_RCSGroundTransform.position, -m_RCSGroundTransform.up, m_RCSGroundTransform.localScale.x);
+        if (hit.collider && hit.collider.gameObject.GetComponent<PlatformEffector2D>())
+        {
+ //           if (jumpTimer <= 0)
+ //           {
+            m_rigidbody.AddForce(transform.up * jump, ForceMode2D.Impulse);
+            jumpTimer = jumpCooldown;
+            //print("ДельтаY " + Mathf.Abs(deltaY));
+
+            //           }
+        }
     }
 
     GameObject FindTarget()
@@ -98,9 +126,6 @@ public class EnemyAI : MonoBehaviour
         direction = new Vector2(m_BackEye.position.x + (view_distance * 0.3f * dur), m_BackEye.position.y);
         Debug.DrawLine(m_BackEye.position, direction, Color.green, Time.deltaTime);
         RaycastHit2D hitBack = Physics2D.Raycast(m_BackEye.position, direction, view_distance * 0.3f);
-
-        
-
 
         if (hitTop.collider != null && hitTop.collider.gameObject != null && hitTop.collider.gameObject.GetComponent<Player>() != null)
         {
@@ -127,22 +152,10 @@ public class EnemyAI : MonoBehaviour
     private void Update()
     {
 
-        m_attack.input(false);
+        m_attack.input(-1f, false);
 
         MoveHorizontal(FindTarget());
 
-
-    }
-
-    // Для взаимодействия с другими объектами
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        Weapon weap = collision.gameObject.GetComponent<Weapon>();
-        if (weap && !weap.GetPicked())
-        {
-            m_attack.pickUpWeapon(weap);
-            weap.SetPicked(true);
-        }
     }
 
 }
