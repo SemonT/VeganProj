@@ -5,8 +5,8 @@ using UnityEngine;
 public class Attack : MonoBehaviour
 {
     // Служебные переменные
-    Transform m_attachPointTransform;
-    Transform m_guidePointTransform;
+    public Transform attachHandTransform;
+    public Transform guideHandTransform;
     Animator m_animator;
 
     GameObject m_weapon;
@@ -20,13 +20,11 @@ public class Attack : MonoBehaviour
 
     bool isAttacking = false;
 
+    Weapon interactionWeapon;
+
     // Запускается при старте
     void Start()
     {
-        Transform armsTransform = transform.Find("Arms");
-        m_attachPointTransform = armsTransform.Find("AttachPoint");
-        m_guidePointTransform = armsTransform.Find("GuidePoint");
-
         m_animator = GetComponent<Animator>();
         clips = m_animator.runtimeAnimatorController.animationClips;
     }
@@ -34,6 +32,7 @@ public class Attack : MonoBehaviour
     // Инициализация параметров анимации и оружия при его подборе
     public void pickUpWeapon(Weapon weapon)
     {
+        weapon.SetPicked(true);
         m_weapon = weapon.gameObject;
         m_weaponHandleTransform = m_weapon.transform.Find("Handle");
         m_weaponDamageDealer = m_weapon.transform.Find("DamageDealer").gameObject.GetComponent<DamageDealer>();
@@ -51,16 +50,22 @@ public class Attack : MonoBehaviour
     // Выбрасывание оружия
     public void dropWeapon()
     {
-        if (m_weapon) m_weapon.transform.eulerAngles = new Vector3(0, 0, 0);
-        m_weapon = null;
-        m_weaponHandleTransform = null;
-        m_weaponDamageDealer = null;
-        m_animType = "Attack";
-        damageDealerCooldown = 0;
+        if(m_weapon)
+        {
+            m_weapon?.GetComponent<Weapon>().SetPicked(false);
+            if (m_weapon) m_weapon.transform.eulerAngles = new Vector3(0, 0, 0);
+            m_weapon = null;
+            m_weaponHandleTransform = null;
+            if (m_weaponDamageDealer) m_weaponDamageDealer.isActive = false;
+            m_weaponDamageDealer = null;
+            m_animType = "Attack";
+            damageDealerCooldown = 0;
+            damageDealerTimer = 0;
+        }
     }
 
     // Вызывается каждый кадр с параметрами ввода пользователя
-    public void input(bool space)
+    public void input(float vertical, bool space)
     {
         if (m_weapon)
         {
@@ -75,14 +80,14 @@ public class Attack : MonoBehaviour
             }
             // Крепление оружия к рукам
             m_weapon.transform.position = new Vector3(
-                m_attachPointTransform.position.x + m_weapon.transform.position.x - m_weaponHandleTransform.position.x,
-                m_attachPointTransform.position.y + m_weapon.transform.position.y - m_weaponHandleTransform.position.y,
-                (m_attachPointTransform.position.z + m_guidePointTransform.position.z) / 2f
+                attachHandTransform.position.x + m_weapon.transform.position.x - m_weaponHandleTransform.position.x,
+                attachHandTransform.position.y + m_weapon.transform.position.y - m_weaponHandleTransform.position.y,
+                (attachHandTransform.position.z + guideHandTransform.position.z) / 2f
                 );
-
-            Vector3 relativePos = m_attachPointTransform.position - m_guidePointTransform.position;
-            m_weapon.transform.rotation = Quaternion.LookRotation(Vector3.Cross(relativePos, -m_attachPointTransform.transform.up), relativePos);
-            Debug.DrawLine(m_guidePointTransform.position, m_attachPointTransform.position, Color.blue, Time.deltaTime); // Визуализация направления оружия
+            Vector2 relativePos = attachHandTransform.position - guideHandTransform.position;
+            m_weapon.transform.rotation = Quaternion.LookRotation(Vector3.Cross(relativePos, -attachHandTransform.transform.up), relativePos);
+            //m_weapon.transform.rotation = Quaternion.LookRotation(Vector3.Cross(relativePos, -m_attachPointTransform.transform.up), relativePos);
+            Debug.DrawLine(guideHandTransform.position, attachHandTransform.position, Color.blue, Time.deltaTime); // Визуализация направления оружия
             // Атака при нажатии на кнопку
             if (space && !isAttacking)
             {
@@ -92,5 +97,38 @@ public class Attack : MonoBehaviour
                 damageDealerTimer = damageDealerCooldown;
             }
         }
+
+        // Подбирание предметов
+        if (vertical < 0 && interactionWeapon)
+        {
+            dropWeapon();
+            pickUpWeapon(interactionWeapon);
+        }
+    }
+
+    // Для взаимодействия с другими объектами
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        Weapon weap = collision.gameObject.GetComponent<Weapon>();
+        if (!interactionWeapon && weap && !weap.GetPicked())
+        {
+            interactionWeapon = weap;
+        }
+    }
+
+    // Для невозможности воздействия с предметами издалека
+    void OnTriggerExit2D(Collider2D collision)
+    {
+        Weapon weap = collision.gameObject.GetComponent<Weapon>();
+        if (weap == interactionWeapon)
+        {
+            interactionWeapon = null;
+        }
+    }
+
+    // Вызов при смерти
+    private void OnDestroy()
+    {
+        dropWeapon();
     }
 }

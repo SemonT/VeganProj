@@ -7,6 +7,7 @@ public class DamageDealer : MonoBehaviour
     // Параметры
     public int damage = 1;
     public bool isActive = false;
+    public bool isAlwaysActive = false;
 
     // Служебные переменные
     Collider2D m_collider;
@@ -20,11 +21,16 @@ public class DamageDealer : MonoBehaviour
     // Нанесение урона объектам со здоровьем
     void OnTriggerStay2D(Collider2D collision)
     {
-        if (isActive)
+        if (isActive || isAlwaysActive)
         {
             Health health = collision.gameObject.GetComponent<Health>();
             if (health)
             {
+                // Отталкивание
+                Vector3 collisionObjectPos = collision.gameObject.transform.position;
+                Vector3 pushDir = transform.forward + transform.up; ;
+                collision.gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * 10, ForceMode2D.Impulse);
+
                 // Определение точки удара
                 Vector3 thisPos = transform.position;
                 Vector3 otherPos = collision.transform.position;
