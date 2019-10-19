@@ -7,8 +7,15 @@ public class Health : MonoBehaviour
 {
     // Параметры
     public int maxHealth = 100;
+    public bool isImmortal = false;
+    public bool stun = false;
+    public bool stunAttacker = false;
     public float deathTime = 5;
-    [ColorUsage(true, true)] public Color juiceColor;
+    public Texture2D piecesTexture;
+    [ColorUsage(true, true)] public Color piecesColor = new Color(255f, 255f, 255f, 1f);
+    public float piecesSize = 1;
+    public Texture2D bleedTexture;
+    [ColorUsage(true, true)] public Color juiceColor = new Color(255f, 255f, 255f, 1f);
     public float bleedIntencity = 1;
 
     // Параметры
@@ -16,8 +23,6 @@ public class Health : MonoBehaviour
     public Transform[] coreSlices;
 
     // Служебные переменные
-    int health;
-    Texture2D texture;
     static GameObject m_bleedPrefab;
     static GameObject m_piesesPrefab;
     static float m_slicesGravity;
@@ -26,22 +31,20 @@ public class Health : MonoBehaviour
     static float m_slicesScale;
     static Image m_playerHpBar;
     static Text m_playerHpText;
-    Image hpBar;
-    Text hpText;
+    int m_health;
+    Image m_hpBar;
+    Text m_hpText;
 
     // Запускается при старте
     void Start()
     {
         if (GetComponent<Player>())
         {
-            hpBar = m_playerHpBar;
-            hpText = m_playerHpText;
-            if (hpText) hpText.text = maxHealth.ToString();
+            m_hpBar = m_playerHpBar;
+            m_hpText = m_playerHpText;
+            if (m_hpText) m_hpText.text = maxHealth.ToString();
         }
-        health = maxHealth;
-
-        if (0 < primeterSlices.Length)
-            texture = primeterSlices[0].GetComponent<SpriteRenderer>().sprite.texture;
+        m_health = maxHealth;
     }
 
     // Инициализация префабов эффектов
@@ -72,14 +75,20 @@ public class Health : MonoBehaviour
             GameObject curObj = Instantiate(m_piesesPrefab, piecesPoint, Quaternion.identity);
 
             // Восстановление масштаба
-            ParticleSystem ps = curObj.GetComponent<ParticleSystem>();
-            ParticleSystem.ShapeModule shape = ps.shape;
-            shape.texture = texture;
-
-            // Определение свойств частиц
             Vector3 scale = curObj.transform.localScale;
             curObj.transform.parent = transform;
             curObj.transform.localScale = scale;
+
+            // Определение свойств частиц
+            ParticleSystem ps = curObj.GetComponent<ParticleSystem>();
+            ParticleSystem.MainModule main = ps.main;
+            main.startSize = new ParticleSystem.MinMaxCurve(main.startSize.constantMin, main.startSize.constantMax * piecesSize);
+            main.startColor = piecesColor;
+            if (piecesTexture)
+            {
+                ParticleSystem.ShapeModule shape = ps.shape;
+                shape.texture = piecesTexture;
+            }
         }
         // Эффект сокотечения
         if (m_bleedPrefab)
@@ -94,8 +103,13 @@ public class Health : MonoBehaviour
             // Определение свойств частиц
             ParticleSystem ps = curObj.GetComponent<ParticleSystem>();
             ParticleSystem.MainModule main = ps.main;
-            main.startColor = juiceColor;
             main.startSize = new ParticleSystem.MinMaxCurve(main.startSize.constantMin, main.startSize.constantMax * bleedIntencity);
+            main.startColor = juiceColor;
+            if (bleedTexture)
+            {
+                ParticleSystem.ShapeModule shape = ps.shape;
+                shape.texture = bleedTexture;
+            }
         }
     }
 
@@ -171,23 +185,26 @@ public class Health : MonoBehaviour
         {
             playDamageEffects(point, tearPiece(point));
         }
-        health -= damage;
-        if (health <= 0)
+        if (!isImmortal)
         {
-            health = 0;
-            death();
-        }
-        else if (health > maxHealth)
-        {
-            health = maxHealth;
-        }
-        if (hpBar)
-        {
-            hpBar.fillAmount = (float)health / maxHealth;
-        }
-        if (hpText)
-        {
-            hpText.text = health.ToString();
+            m_health -= damage;
+            if (m_health <= 0)
+            {
+                m_health = 0;
+                death();
+            }
+            else if (m_health > maxHealth)
+            {
+                m_health = maxHealth;
+            }
+            if (m_hpBar)
+            {
+                m_hpBar.fillAmount = (float)m_health / maxHealth;
+            }
+            if (m_hpText)
+            {
+                m_hpText.text = m_health.ToString();
+            }
         }
     }
 

@@ -11,6 +11,20 @@ public class DamageDealer : MonoBehaviour
 
     // Служебные переменные
     Collider2D m_collider;
+    private bool m_stunTrigger;
+    public bool StunTrigger
+    {
+        private set
+        {
+            m_stunTrigger = value;
+        }
+        get
+        {
+            bool t = m_stunTrigger;
+            m_stunTrigger = false;
+            return t;
+        }
+    }
 
     // Запускается при старте
     void Start()
@@ -27,9 +41,15 @@ public class DamageDealer : MonoBehaviour
             if (health)
             {
                 // Отталкивание
-                Vector3 collisionObjectPos = collision.gameObject.transform.position;
-                Vector3 pushDir = transform.forward + transform.up; ;
-                collision.gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * 10, ForceMode2D.Impulse);
+                //Vector3 collisionObjectPos = collision.gameObject.transform.position;
+                //Vector3 pushDir = transform.forward + transform.up; ;
+                //collision.gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * 10, ForceMode2D.Impulse);
+
+                // Стан атакующего
+                if (health.stunAttacker)
+                {
+                    StunTrigger = true;
+                }
 
                 // Определение точки удара
                 Vector3 thisPos = transform.position;

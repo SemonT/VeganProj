@@ -4,21 +4,30 @@ using UnityEngine;
 
 public class Attack : MonoBehaviour
 {
-    // Служебные переменные
+    // Параметры
+    public float blockCooldown = 5f;
     public Transform attachHandTransform;
     public Transform guideHandTransform;
+
+    // Служебные переменные
     Animator m_animator;
 
-    GameObject m_weapon;
+    Weapon m_weapon;
+    GameObject m_weaponObject;
+    Rigidbody2D m_weaponRigidBody;
     Transform m_weaponHandleTransform;
-    DamageDealer m_weaponDamageDealer;
-    string m_animType;
+    DamageDealer[] m_weaponDamageDealers;
+    string m_attackAnimType;
+    string m_stunAnimType;
 
     AnimationClip[] clips;
-    float damageDealerCooldown;
-    float damageDealerTimer = 0;
-
-    bool isAttacking = false;
+    float attackCooldown;
+    float attackTimer = 0;
+    float stunCooldown;
+    float stunTimer = 0;
+    public string m_blockAnimType;
+    float m_blockFullCooldown;
+    float m_blockTimer = 0f;
 
     Weapon interactionWeapon;
 
@@ -32,18 +41,29 @@ public class Attack : MonoBehaviour
     // Инициализация параметров анимации и оружия при его подборе
     public void pickUpWeapon(Weapon weapon)
     {
-        weapon.SetPicked(true);
-        m_weapon = weapon.gameObject;
-        m_weaponHandleTransform = m_weapon.transform.Find("Handle");
-        m_weaponDamageDealer = m_weapon.transform.Find("DamageDealer").gameObject.GetComponent<DamageDealer>();
-        m_animType = "Attack" + weapon.GetWeaponType();
+        m_weapon = weapon;
+        m_weapon.isPicked = true;
+        m_weaponObject = m_weapon.gameObject;
+        Physics2D.IgnoreCollision(GetComponent<Collider2D>(), m_weaponObject.GetComponent<Collider2D>());
+        m_weaponHandleTransform = m_weapon.handle;
+        m_weaponDamageDealers = m_weapon.damageDealers;
+        m_attackAnimType = "Attack" + m_weapon.GetWeaponType();
+        m_stunAnimType = "Stun";
+        m_blockAnimType = "Block";
+        m_blockFullCooldown = blockCooldown;
         foreach (AnimationClip clip in clips)
         {
-            if (clip.name == m_animType)
+            if (clip.name == m_attackAnimType)
             {
-                damageDealerCooldown = clip.length;
-                break;
+                attackCooldown = clip.length;
+            } else if (clip.name == m_stunAnimType)
+            {
+                stunCooldown = clip.length;
+            } else if(clip.name == m_blockAnimType)
+            {
+                m_blockFullCooldown += clip.length;
             }
+
         }
     }
 
@@ -52,54 +72,83 @@ public class Attack : MonoBehaviour
     {
         if(m_weapon)
         {
-            m_weapon?.GetComponent<Weapon>().SetPicked(false);
-            if (m_weapon) m_weapon.transform.eulerAngles = new Vector3(0, 0, 0);
+            m_weapon.isPicked = false;
+            m_weaponObject.transform.eulerAngles = new Vector3(0, 0, 0);
             m_weapon = null;
             m_weaponHandleTransform = null;
-            if (m_weaponDamageDealer) m_weaponDamageDealer.isActive = false;
-            m_weaponDamageDealer = null;
-            m_animType = "Attack";
-            damageDealerCooldown = 0;
-            damageDealerTimer = 0;
+            foreach (DamageDealer dd in m_weaponDamageDealers)
+            {
+                dd.isActive = false;
+            }
+            m_weaponDamageDealers = null;
+            m_attackAnimType = "Attack";
+            attackCooldown = 0;
+            attackTimer = 0;
+            stunCooldown = 0;
+            stunTimer = 0;
         }
     }
 
     // Вызывается каждый кадр с параметрами ввода пользователя
-    public void input(float vertical, bool space)
+    public void Input(bool attackKeyDown, bool blockKeyDown, bool pickupKeyDown)
     {
         if (m_weapon)
         {
-            if (damageDealerTimer > 0)
+            if (m_blockTimer > 0)
             {
-                damageDealerTimer -= Time.deltaTime;
+                m_blockTimer -= Time.deltaTime;
             }
-            else
+            else if (blockKeyDown)
             {
-                isAttacking = false;
-                m_weaponDamageDealer.isActive = false;
+                if (!m_weaponRigidBody) m_weaponRigidBody = m_weaponObject.AddComponent<Rigidbody2D>();
+                m_weaponRigidBody.gravityScale = 0;
+                m_animator.SetTrigger(m_blockAnimType);
+                m_blockTimer = m_blockFullCooldown;
+            }
+            else if (m_weaponRigidBody)
+            {
+                Destroy(m_weaponObject.GetComponent<Rigidbody2D>());
+            }
+
+            if (stunTimer > 0)
+            {
+                stunTimer -= Time.deltaTime;
+            }
+            if (attackTimer > 0)
+            {
+                m_weapon.Input();
+                if (m_weapon.StunTrigger)
+                {
+                    stunTimer = stunCooldown;
+                    m_animator.SetTrigger("Stun");
+                }
+                attackTimer -= Time.deltaTime;
+            }
+            else if (m_weapon.IsAttacking)
+            {
+                m_weapon.IsAttacking = false;
             }
             // Крепление оружия к рукам
-            m_weapon.transform.position = new Vector3(
-                attachHandTransform.position.x + m_weapon.transform.position.x - m_weaponHandleTransform.position.x,
-                attachHandTransform.position.y + m_weapon.transform.position.y - m_weaponHandleTransform.position.y,
+            m_weaponObject.transform.position = new Vector3(
+                attachHandTransform.position.x + m_weaponObject.transform.position.x - m_weaponHandleTransform.position.x,
+                attachHandTransform.position.y + m_weaponObject.transform.position.y - m_weaponHandleTransform.position.y,
                 (attachHandTransform.position.z + guideHandTransform.position.z) / 2f
                 );
             Vector2 relativePos = attachHandTransform.position - guideHandTransform.position;
-            m_weapon.transform.rotation = Quaternion.LookRotation(Vector3.Cross(relativePos, -attachHandTransform.transform.up), relativePos);
+            m_weaponObject.transform.rotation = Quaternion.LookRotation(Vector3.Cross(relativePos, -attachHandTransform.transform.up), relativePos);
             //m_weapon.transform.rotation = Quaternion.LookRotation(Vector3.Cross(relativePos, -m_attachPointTransform.transform.up), relativePos);
             Debug.DrawLine(guideHandTransform.position, attachHandTransform.position, Color.blue, Time.deltaTime); // Визуализация направления оружия
             // Атака при нажатии на кнопку
-            if (space && !isAttacking)
+            if (attackKeyDown && attackTimer <= 0 && stunTimer <= 0 && m_blockTimer <= 0)
             {
-                m_animator.SetTrigger(m_animType);
-                isAttacking = true;
-                m_weaponDamageDealer.isActive = true;
-                damageDealerTimer = damageDealerCooldown;
+                m_animator.SetTrigger(m_attackAnimType);
+                m_weapon.IsAttacking = true;
+                attackTimer = attackCooldown;
             }
         }
 
         // Подбирание предметов
-        if (vertical < 0 && interactionWeapon)
+        if (pickupKeyDown && interactionWeapon)
         {
             dropWeapon();
             pickUpWeapon(interactionWeapon);
@@ -110,7 +159,7 @@ public class Attack : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         Weapon weap = collision.gameObject.GetComponent<Weapon>();
-        if (!interactionWeapon && weap && !weap.GetPicked())
+        if (!interactionWeapon && weap && !weap.isPicked)
         {
             interactionWeapon = weap;
         }

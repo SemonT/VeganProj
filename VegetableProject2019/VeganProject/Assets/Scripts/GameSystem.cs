@@ -49,7 +49,7 @@ public class GameSystem : MonoBehaviour
         if (player)
         {
             // Передача параметров ввода игровому персонажу
-            player.input(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), Input.GetKeyDown(KeyCode.Space));
+            player.Input(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), Input.GetKeyDown(KeyCode.Z), Input.GetKeyDown(KeyCode.X), Input.GetKeyDown(KeyCode.C));
         }
     }
 

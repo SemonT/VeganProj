@@ -605,7 +605,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  isImmortal: 0
+  stun: 0
+  stunAttacker: 0
   deathTime: 5
+  piecesTexture: {fileID: 2800000, guid: 052c76a927de8234ba13e17002423db0, type: 3}
+  piecesColor: {r: 255, g: 255, b: 255, a: 1}
+  piecesSize: 1
+  bleedTexture: {fileID: 0}
   juiceColor: {r: 0.735849, g: 0, b: 0, a: 1}
   bleedIntencity: 1
   primeterSlices:

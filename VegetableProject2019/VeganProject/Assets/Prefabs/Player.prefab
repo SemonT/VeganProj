@@ -777,8 +777,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4efa11d92f884b7428dd5039fe58032d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockCooldown: 0
   attachHandTransform: {fileID: 2599729377697091838}
   guideHandTransform: {fileID: 3339027664610357896}
+  m_blockAnimType: 
 --- !u!95 &2317034696858056754
 Animator:
   serializedVersion: 3
@@ -811,8 +813,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 200
+  isImmortal: 1
+  stun: 0
+  stunAttacker: 0
   deathTime: 5
-  juiceColor: {r: 0, g: 0.5660378, b: 0.006747831, a: 1}
+  piecesTexture: {fileID: 2800000, guid: 4842be98cb55d7d4592212357aa78152, type: 3}
+  piecesColor: {r: 1404.913, g: 1404.913, b: 1404.913, a: 1}
+  piecesSize: 1
+  bleedTexture: {fileID: 0}
+  juiceColor: {r: 0, g: 0.13207549, b: 0.011256431, a: 1}
   bleedIntencity: 0.5
   primeterSlices:
   - {fileID: 1096662867478259494}
