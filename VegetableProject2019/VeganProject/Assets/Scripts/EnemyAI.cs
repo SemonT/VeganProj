@@ -66,7 +66,7 @@ public class EnemyAI : MonoBehaviour
         if(Mathf.Abs(delta) < 12f && Mathf.Abs(delta) > 2f)
         {
             //print("Атакую ");
-            m_attack.input(true);
+            m_attack.input(0f, true);
         }
         
 
@@ -152,22 +152,10 @@ public class EnemyAI : MonoBehaviour
     private void Update()
     {
 
-        m_attack.input(false);
+        m_attack.input(-1f, false);
 
         MoveHorizontal(FindTarget());
 
-
-    }
-
-    // Для взаимодействия с другими объектами
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        Weapon weap = collision.gameObject.GetComponent<Weapon>();
-        if (weap && !weap.GetPicked())
-        {
-            m_attack.pickUpWeapon(weap);
-            weap.SetPicked(true);
-        }
     }
 
 }

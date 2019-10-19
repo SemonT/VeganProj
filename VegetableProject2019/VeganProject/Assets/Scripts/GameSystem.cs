@@ -14,9 +14,12 @@ public class GameSystem : MonoBehaviour
     public Text playerHpText;
     public float slicesGravity = 10;
     public float slicesScatter = 20;
+    public float slicesMaxRotation = 30f;
     public float slicesScale = 1;
 
     // Служеблые переменные
+    static string m_currentSceneName;
+    static string m_mainMenuSceneName;
     static GameSystem m_instance;
     Player player; // Скрипт игрока
 
@@ -27,11 +30,11 @@ public class GameSystem : MonoBehaviour
         {
             m_instance = this;
         }
-        DontDestroyOnLoad(gameObject);
-        if (canvas) DontDestroyOnLoad(canvas);
+        //DontDestroyOnLoad(gameObject);
+        //if (canvas) DontDestroyOnLoad(canvas);
         player = Player.GetInstance();
         // Настройка систамы здоровья
-        Health.Set(bleedPrefab, piesesPrefab, slicesGravity, slicesScatter, slicesScale, playerHpBar, playerHpText);
+        Health.Set(bleedPrefab, piesesPrefab, slicesGravity, slicesScatter, slicesMaxRotation, slicesScale, playerHpBar, playerHpText);
     }
 
     // Обращение к единственному объекту этого класса

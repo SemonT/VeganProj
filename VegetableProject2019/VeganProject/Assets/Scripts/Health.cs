@@ -10,16 +10,19 @@ public class Health : MonoBehaviour
     public float deathTime = 5;
     [ColorUsage(true, true)] public Color juiceColor;
     public float bleedIntencity = 1;
-    
+
+    // Параметры
+    public Transform[] primeterSlices;
+    public Transform[] coreSlices;
+
     // Служебные переменные
     int health;
-    List<Transform> slicesTransforms;
-    List<Transform> coresTransforms;
     Texture2D texture;
     static GameObject m_bleedPrefab;
     static GameObject m_piesesPrefab;
     static float m_slicesGravity;
     static float m_slicesScatter;
+    static float m_slicesMaxRotation;
     static float m_slicesScale;
     static Image m_playerHpBar;
     static Text m_playerHpText;
@@ -37,32 +40,18 @@ public class Health : MonoBehaviour
         }
         health = maxHealth;
 
-        slicesTransforms = new List<Transform>();
-        Transform slices = transform.Find("Skin")?.Find("slices");
-        if (slices)
-        {
-            slices.GetComponentsInChildren(false, slicesTransforms);
-            slicesTransforms.Remove(slices);
-        }
-
-        coresTransforms = new List<Transform>();
-        Transform cores = transform.Find("Skin")?.Find("core_body");
-        if (cores)
-        {
-            cores.GetComponentsInChildren(false, coresTransforms);
-            coresTransforms.Remove(cores);
-        }
-
-        texture = coresTransforms[0].GetComponent<SpriteRenderer>().sprite.texture;
+        if (0 < primeterSlices.Length)
+            texture = primeterSlices[0].GetComponent<SpriteRenderer>().sprite.texture;
     }
 
     // Инициализация префабов эффектов
-    public static void Set(GameObject bleedPrefab, GameObject piesesPrefab, float slicesGravity, float slicesScatter, float slicesScale, Image playerHpBar, Text playerHpText)
+    public static void Set(GameObject bleedPrefab, GameObject piesesPrefab, float slicesGravity, float slicesScatter, float slicesMaxRotation, float slicesScale, Image playerHpBar, Text playerHpText)
     {
         m_bleedPrefab = bleedPrefab;
         m_piesesPrefab = piesesPrefab;
         m_slicesGravity = slicesGravity;
         m_slicesScatter = slicesScatter;
+        m_slicesMaxRotation = slicesMaxRotation;
         m_slicesScale = slicesScale;
         m_playerHpBar = playerHpBar;
         m_playerHpText = playerHpText;
@@ -115,13 +104,16 @@ public class Health : MonoBehaviour
     {
         Transform nearest = null;
         float minDistance = float.MaxValue;
-        foreach (Transform child in slicesTransforms)
+        foreach (Transform slice in primeterSlices)
         {
-            float distance = (child.position - point).magnitude;
-            if (distance < minDistance)
+            if (slice)
             {
-                minDistance = distance;
-                nearest = child;
+                float distance = (slice.position - point).magnitude;
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearest = slice;
+                }
             }
         }
         Vector3 position;
@@ -129,9 +121,8 @@ public class Health : MonoBehaviour
         {
             Debug.DrawLine(point, nearest.position, Color.yellow, 5f); // Указывание на отделяемый фрагмент
             nearest.position = new Vector3(nearest.position.x, nearest.position.y, nearest.position.z - 1);
-            tearPiece(nearest.gameObject);
-
             position = nearest.position;
+            tearPiece(nearest.gameObject);
         }
         else
         {
@@ -153,9 +144,22 @@ public class Health : MonoBehaviour
         }
         nearestRigidBody.gravityScale = m_slicesGravity;
         nearestRigidBody.AddForce(Random.insideUnitCircle.normalized * m_slicesScatter, ForceMode2D.Impulse);
-        slicesTransforms.Remove(piece.transform);
+        nearestRigidBody.AddTorque((Random.value - 0.5f) * m_slicesMaxRotation, ForceMode2D.Impulse);
 
-        
+        for (int i = 0; i < primeterSlices.Length; i++)
+        {
+            if (primeterSlices[i] == piece)
+            {
+                primeterSlices[i] = null;
+            }
+        }
+        for (int i = 0; i < coreSlices.Length; i++)
+        {
+            if (coreSlices[i] == piece)
+            {
+                coreSlices[i] = null;
+            }
+        }
 
         Destroy(piece, deathTime);
     }
@@ -190,11 +194,15 @@ public class Health : MonoBehaviour
     // Смерть персонажа
     void death()
     {
-        List<Transform> objectsTransforms = new List<Transform>();
-        gameObject.GetComponentsInChildren(false, objectsTransforms);
-        for (int i = objectsTransforms.Count - 1; i >= 0; i--)
+        for (int i = primeterSlices.Length - 1; i >= 0; i--)
         {
-            tearPiece(objectsTransforms[i].gameObject);
+            if (primeterSlices[i])
+                tearPiece(primeterSlices[i].gameObject);
+        }
+        for (int i = coreSlices.Length - 1; i >= 0; i--)
+        {
+            if (coreSlices[i])
+                tearPiece(coreSlices[i].gameObject);
         }
         Destroy(gameObject);
     }
