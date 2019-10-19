@@ -33,12 +33,12 @@ public class Player : MonoBehaviour
     }
 
     // Вызывается каждый кадр с параметрами ввода пользователя
-    public void input(float horisontal, float vertical, bool space)
+    public void Input(float horisontal, float vertical, bool zKeyDown, bool xKeyDown, bool cKeyDown)
     {
         // Перемещение
-        m_move?.MoveInput(horisontal, vertical);
+        m_move?.Input(horisontal, vertical);
         // Атака
-        m_attack?.input(vertical, space);
+        m_attack?.Input(zKeyDown, xKeyDown, cKeyDown);
     }
 
     // Вызов при уничтожении объектов этого класса

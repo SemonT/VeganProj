@@ -13,7 +13,6 @@ public class Move : MonoBehaviour
     Rigidbody2D m_rigidbody;
     Animator m_animator;
     bool dir = false;
-    bool inAir = false;
     float jumpCooldown = 1f;
     float jumpTimer = 0;
 
@@ -25,7 +24,7 @@ public class Move : MonoBehaviour
     }
 
     // Перемещение
-    public void MoveInput(float horisontal, float vertical)
+    public void Input(float horisontal, float vertical)
     {
         // Обновление таймеров
         if (jumpTimer > 0) jumpTimer -= Time.deltaTime;
@@ -48,21 +47,6 @@ public class Move : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(jumpRayCastSource.transform.position, -jumpRayCastSource.transform.up, jumpRayCastSource.transform.localScale.x);
         if (hit.collider && hit.collider.gameObject.GetComponent<PlatformEffector2D>())
         {
-            inAir = false;
-            if (vertical > 0 && jumpTimer <= 0)
-            {
-                m_rigidbody.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
-                jumpTimer = jumpCooldown;
-            }
-        }
-        else
-        {
-            inAir = true;
-        }
-
-        // Управление анимациями
-        if (!inAir)
-        {
             if (horisontal == 0)
             {
                 m_animator.SetInteger("State", 1); // Стойка
@@ -70,6 +54,11 @@ public class Move : MonoBehaviour
             else
             {
                 m_animator.SetInteger("State", 2); // Ходьба
+            }
+            if (vertical > 0 && jumpTimer <= 0)
+            {
+                m_rigidbody.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+                jumpTimer = jumpCooldown;
             }
         }
         else

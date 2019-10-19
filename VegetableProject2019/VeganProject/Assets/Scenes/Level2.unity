@@ -729,6 +729,7 @@ MonoBehaviour:
   playerHpText: {fileID: 1788313950}
   slicesGravity: 5
   slicesScatter: 30
+  slicesMaxRotation: 30
   slicesScale: 1.5
 --- !u!4 &1057846313
 Transform:

@@ -66,7 +66,7 @@ public class EnemyAI : MonoBehaviour
         if(Mathf.Abs(delta) < 12f && Mathf.Abs(delta) > 2f)
         {
             //print("Атакую ");
-            m_attack.input(0f, true);
+            m_attack.Input(true, false, false);
         }
         
 
@@ -152,7 +152,7 @@ public class EnemyAI : MonoBehaviour
     private void Update()
     {
 
-        m_attack.input(-1f, false);
+        m_attack.Input(true, false, true);
 
         MoveHorizontal(FindTarget());
 

@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 4827748817918231858}
   - component: {fileID: 4827748817918231859}
   - component: {fileID: 4827748817918231860}
+  - component: {fileID: 8118871875707145552}
   m_Layer: 0
   m_Name: Toothpick
   m_TagString: Untagged
@@ -61,7 +62,7 @@ Transform:
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children:
   - {fileID: 4827748817734753369}
-  - {fileID: 4827748818826458033}
+  - {fileID: 2759610916367086380}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -152,7 +153,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adbebd569c917e44bb6fc01e06bc6a14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  handle: {fileID: 4827748817734753369}
+  damageDealers:
+  - {fileID: 4827748818826458032}
   WeaponType: Jab
+  isPicked: 0
+--- !u!114 &8118871875707145552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4827748817918231861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44b9f95e3b9107e4380d06b65894fca4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  isImmortal: 1
+  stun: 0
+  stunAttacker: 1
+  deathTime: 5
+  piecesTexture: {fileID: 0}
+  piecesColor: {r: 0.79910296, g: 0.6514058, b: 0.33716366, a: 1}
+  piecesSize: 0.6
+  bleedTexture: {fileID: 0}
+  juiceColor: {r: 454.52072, g: 454.52072, b: 454.52072, a: 1}
+  bleedIntencity: 0
+  primeterSlices: []
+  coreSlices: []
 --- !u!1 &4827748818826458034
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,8 +212,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 2.83, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4827748817918231857}
-  m_RootOrder: 1
+  m_Father: {fileID: 2759610916367086380}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &4827748818826458031
 BoxCollider2D:
@@ -225,3 +255,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 20
   isActive: 0
+  isAlwaysActive: 0
+--- !u!1 &6559728182299491254
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2759610916367086380}
+  m_Layer: 0
+  m_Name: DamageDealers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2759610916367086380
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6559728182299491254}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4827748818826458033}
+  m_Father: {fileID: 4827748817918231857}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
