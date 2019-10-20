@@ -12,7 +12,7 @@ public class Attack : MonoBehaviour
     // Служебные переменные
     Animator m_animator;
 
-    Weapon m_weapon;
+    [HideInInspector] public Weapon m_weapon;
     GameObject m_weaponObject;
     Rigidbody2D m_weaponRigidBody;
     Transform m_weaponHandleTransform;

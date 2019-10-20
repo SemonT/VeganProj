@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 19f4a56a4ec0658459ca49c6d09dd2f8, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -303,7 +303,7 @@ PrefabInstance:
     - target: {fileID: 4184922763527548385, guid: ac227fe804744f844b294a458135ab3c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4184922763527548385, guid: ac227fe804744f844b294a458135ab3c,
         type: 3}
@@ -395,7 +395,7 @@ Camera:
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -650,7 +650,7 @@ PrefabInstance:
     - target: {fileID: 4184922763527548385, guid: ac227fe804744f844b294a458135ab3c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4184922763527548385, guid: ac227fe804744f844b294a458135ab3c,
         type: 3}
@@ -692,6 +692,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4184922763527548391, guid: ac227fe804744f844b294a458135ab3c,
+        type: 3}
+      propertyPath: m_UsedByEffector
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac227fe804744f844b294a458135ab3c, type: 3}
 --- !u!1001 &910850653
@@ -719,7 +724,7 @@ PrefabInstance:
     - target: {fileID: 4184922763527548385, guid: ac227fe804744f844b294a458135ab3c,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4184922763527548385, guid: ac227fe804744f844b294a458135ab3c,
         type: 3}
@@ -1473,6 +1478,16 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 1.5
       objectReference: {fileID: 0}
+    - target: {fileID: 306553038511908091, guid: 80c16e197c1c74f48a70c7a10d2f0b1d,
+        type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 306553038511908089, guid: 80c16e197c1c74f48a70c7a10d2f0b1d,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7000763024882411878, guid: 80c16e197c1c74f48a70c7a10d2f0b1d,
         type: 3}
       propertyPath: slicesGravity
@@ -1498,20 +1513,15 @@ PrefabInstance:
       propertyPath: slicesScale
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 306553037891262036, guid: 80c16e197c1c74f48a70c7a10d2f0b1d,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 206395100903107565, guid: 80c16e197c1c74f48a70c7a10d2f0b1d,
         type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 306553038511908089, guid: 80c16e197c1c74f48a70c7a10d2f0b1d,
+    - target: {fileID: 306553037891262036, guid: 80c16e197c1c74f48a70c7a10d2f0b1d,
         type: 3}
-      propertyPath: m_Enabled
-      value: 0
+      propertyPath: m_LocalPosition.z
+      value: -0.1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2039407915051581692, guid: 80c16e197c1c74f48a70c7a10d2f0b1d, type: 3}
@@ -1605,7 +1615,7 @@ PrefabInstance:
     - target: {fileID: 2169369236444105176, guid: 749f92964533ad24e999d043a2d9a28b,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.42
+      value: -2.9
       objectReference: {fileID: 0}
     - target: {fileID: 2169369236444105176, guid: 749f92964533ad24e999d043a2d9a28b,
         type: 3}
@@ -1666,6 +1676,11 @@ PrefabInstance:
         type: 3}
       propertyPath: bleedIntencity
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8463293952955578061, guid: 749f92964533ad24e999d043a2d9a28b,
+        type: 3}
+      propertyPath: isImmortal
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2169369236444105178, guid: 749f92964533ad24e999d043a2d9a28b,
         type: 3}

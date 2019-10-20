@@ -765,6 +765,7 @@ MonoBehaviour:
   speed: 10
   jumpRayCastSource: {fileID: 2169369237212493063}
   jumpForce: 10
+  dir: 0
 --- !u!114 &2169369236444105174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -780,6 +781,7 @@ MonoBehaviour:
   blockCooldown: 0
   attachHandTransform: {fileID: 2599729377697091838}
   guideHandTransform: {fileID: 3339027664610357896}
+  m_weapon: {fileID: 0}
   m_blockAnimType: 
 --- !u!95 &2317034696858056754
 Animator:
@@ -813,7 +815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 200
-  isImmortal: 1
+  isImmortal: 0
   stun: 0
   stunAttacker: 0
   deathTime: 5
@@ -1927,7 +1929,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5210653043904072400}
   m_LocalRotation: {x: -0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 8.771429, z: 0}
+  m_LocalPosition: {x: 0, y: 8.771429, z: -1}
   m_LocalScale: {x: 1.5714287, y: 1.714286, z: 1}
   m_Children: []
   m_Father: {fileID: 4935254341085293839}
@@ -1970,7 +1972,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 0a69664914d50c74880595614b089afa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

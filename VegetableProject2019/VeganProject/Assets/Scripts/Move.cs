@@ -12,7 +12,7 @@ public class Move : MonoBehaviour
     // Служебные переменные
     Rigidbody2D m_rigidbody;
     Animator m_animator;
-    bool dir = false;
+    [HideInInspector] public bool dir = false;
     float jumpCooldown = 1f;
     float jumpTimer = 0;
 

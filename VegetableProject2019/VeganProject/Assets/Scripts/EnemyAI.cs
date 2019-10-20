@@ -7,13 +7,11 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour
 {
     // Параметры
-    //public GameObject target;
-
-    [SerializeField] float jump = 12f;
-    [SerializeField] float speed = 7f;
     [SerializeField] float view_distance = 65f;
 
     // Служебные переменные
+    Move moventer;
+
     Rigidbody2D m_rigidbody;
     Animator m_animator;
     Attack m_attack;
@@ -24,23 +22,20 @@ public class EnemyAI : MonoBehaviour
     Transform m_BottomEye;
     Transform m_BackEye;
 
-    bool dir = false;
+    GameObject target;
+
     float dur = 1;
-    float jumpCooldown = 1f;
-    float jumpTimer = 0;
 
     void Start()
     {
+        moventer = GetComponent<Move>();
+
         m_rigidbody = GetComponent<Rigidbody2D>();
 
         m_animator = GetComponent<Animator>();
         m_attack = GetComponent<Attack>();
 
         Transform RCSParentTransform = transform.Find("RayCastSources");
-        if (RCSParentTransform)
-        {
-            m_RCSGroundTransform = RCSParentTransform.Find("Ground");
-        }
 
         m_TopEye = RCSParentTransform.Find("FrontEyesTop");
         m_BottomEye = RCSParentTransform.Find("FrontEyesBottom");
@@ -49,66 +44,63 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Вызывается каждый кадр с параметрами 
-    void MoveHorizontal(GameObject target)
+    float MoveHorizontal(GameObject target)
     {
-        if (jumpTimer > 0) jumpTimer -= Time.deltaTime;
-        float delta = transform.position.x - target.transform.position.x;
-        float deltaY = transform.position.y - target.transform.position.y;
+        float deltaX = transform.position.x - target.transform.position.x;
 
-        if (Mathf.Abs(deltaY) > 3f && jumpTimer <= 0) MoveVertical(deltaY);
-        
+        float mod = Mathf.Abs(deltaX);
 
-
-        m_animator.SetFloat("Move", Mathf.Abs(delta));
-
-     //   print("ДельтаY " + Mathf.Abs(deltaY));
-
-        if(Mathf.Abs(delta) < 12f && Mathf.Abs(delta) > 2f)
+        if (mod < 13f && mod > 2f && m_attack.m_weapon.IsAttacking == false)
         {
-            //print("Атакую ");
             m_attack.Input(true, false, false);
         }
+
+//        Vector2 horizon_move = new Vector2(deltaX, 0);
+        if (mod < 11.2f && mod > 10.5f)
+        {
+            return 0;
+        } else if (mod < 10.5f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, transform.position + transform.right * deltaX, moventer.speed * Time.deltaTime);
+            return 0;
+        }
         
-
-        if (delta < 0 && !dir || delta > 0 && dir)
-        {
-            dir = !dir;
-            transform.localScale = new Vector2(transform.localScale.x * -1, transform.localScale.y);
-        }
-
-        Vector3 horiz_axis = new Vector3(0, 0, 0);
-        if (delta > 10f)
-        {
-            horiz_axis = (target.transform.position - transform.position).normalized;
-        }
-        else if (delta < 8f)
-        {
-            horiz_axis = (transform.position - target.transform.position).normalized;
-        }
-        transform.position = Vector2.MoveTowards(transform.position, transform.position + horiz_axis, speed * Time.deltaTime);
+        return deltaX * (-1);
     }
 
 
-    void MoveVertical(float deltaY)
+    float MoveVertical(GameObject target)
     {
-        // Прыжки
-        Debug.DrawLine(m_RCSGroundTransform.position, m_RCSGroundTransform.position - transform.up * m_RCSGroundTransform.localScale.y, Color.green, Time.deltaTime); // Визуализация рейкаста
-        RaycastHit2D hit = Physics2D.Raycast(m_RCSGroundTransform.position, -m_RCSGroundTransform.up, m_RCSGroundTransform.localScale.x);
-        if (hit.collider && hit.collider.gameObject.GetComponent<PlatformEffector2D>())
-        {
- //           if (jumpTimer <= 0)
- //           {
-            m_rigidbody.AddForce(transform.up * jump, ForceMode2D.Impulse);
-            jumpTimer = jumpCooldown;
-            //print("ДельтаY " + Mathf.Abs(deltaY));
+        /*
+        Physics2D.queriesHitTriggers = true;
 
-            //           }
+        Vector2 vect = new Vector2(m_TopEye.position.x, m_TopEye.position.y + 0.5f);
+
+        Vector2 direction = new Vector2(m_TopEye.position.x - view_distance * dur * 0.2f, m_TopEye.position.y - 5f);
+        Debug.DrawLine(vect, direction, Color.magenta, Time.deltaTime);
+        RaycastHit2D hitTop = Physics2D.Raycast(vect, direction, view_distance * 0.2f);
+        */
+
+        float deltaY = transform.position.y - target.transform.position.y;
+        /*//print(deltaY);
+        if (hitTop.collider)
+            print(" " + hitTop.collider.gameObject);
+        else
+            print(null);
+        */
+        
+        if (/*hitTop.collider && hitTop.collider.gameObject.GetComponent<PlatformEffector2D>() && */deltaY < -2f)
+        {
+            //print("Прыжок");
+            return deltaY * (-1);
         }
+
+        return 0;
     }
 
     GameObject FindTarget()
     {
-        if (dir)
+        if (moventer.dir)
             dur = -1f;
         else
             dur = 1f;
@@ -129,19 +121,19 @@ public class EnemyAI : MonoBehaviour
 
         if (hitTop.collider != null && hitTop.collider.gameObject != null && hitTop.collider.gameObject.GetComponent<Player>() != null)
         {
-            //print("Найдено Верхним глазом " + hitTop.collider.gameObject.name);
+        //    print("Найдено Верхним глазом " + hitTop.collider.gameObject.name);
             return hitTop.collider.gameObject;
         }
 
         if (hitBottom.collider != null && hitBottom.collider.gameObject != null && hitBottom.collider.gameObject.GetComponent<Player>() != null)
         {
-            //print("Найдено Нижним глазом " + hitBottom.collider.gameObject.name);
+        //    print("Найдено Нижним глазом " + hitBottom.collider.gameObject.name);
             return hitBottom.collider.gameObject;
         }
 
         if (hitBack.collider != null && hitBack.collider.gameObject != null && hitBack.collider.gameObject.GetComponent<Player>() != null)
         {
-            //print("Найдено жеппой " + hitBack.collider.gameObject.name);
+        //    print("Найдено жеппой " + hitBack.collider.gameObject.name);
             return hitBack.collider.gameObject;
         }
 
@@ -151,10 +143,11 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
+        target = FindTarget();
 
-        m_attack.Input(true, false, true);
-
-        MoveHorizontal(FindTarget());
+        moventer.Input(MoveHorizontal(target), MoveVertical(target));
+        
+        m_attack.Input(false, false, true);
 
     }
 

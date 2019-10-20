@@ -41,9 +41,9 @@ public class DamageDealer : MonoBehaviour
             if (health)
             {
                 // Отталкивание
-                //Vector3 collisionObjectPos = collision.gameObject.transform.position;
-                //Vector3 pushDir = transform.forward + transform.up; ;
-                //collision.gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * 10, ForceMode2D.Impulse);
+                Vector3 collisionObjectPos = collision.gameObject.transform.position;
+                Vector3 pushDir = transform.forward + transform.up; ;
+                collision.gameObject.GetComponent<Rigidbody2D>().AddForce(pushDir * 10, ForceMode2D.Impulse);
 
                 // Стан атакующего
                 if (health.stunAttacker)
@@ -60,13 +60,14 @@ public class DamageDealer : MonoBehaviour
                 filter.useTriggers = false;
                 Physics2D.Raycast(thisPos, dir, filter, results);
                 RaycastHit2D hit = results[0];
-                // Вызов функции нанесения урона
-                if (hit.collider)
+                if (!hit.collider)
                 {
-                    Debug.DrawLine(thisPos, hit.point, Color.cyan, 3); // Визуализация рейкаста снаружи коллайдера
-                    Debug.DrawLine(hit.point, otherPos, Color.red, 3);// Визуализация рейкаста внутри коллайдера
-                    health.addDamage(damage, hit.point);
+                    hit.point = otherPos;
                 }
+                Debug.DrawLine(thisPos, hit.point, Color.cyan, 3); // Визуализация рейкаста снаружи коллайдера
+                Debug.DrawLine(hit.point, otherPos, Color.red, 3);// Визуализация рейкаста внутри коллайдера
+                // Вызов функции нанесения урона
+                health.addDamage(damage, hit.point);
             }
             isActive = false;
         }
