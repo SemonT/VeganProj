@@ -7,59 +7,55 @@ public class Health : MonoBehaviour
 {
     // Параметры
     public int maxHealth = 100;
+    public bool isImmortal = false;
+    public bool stun = false;
+    public bool stunAttacker = false;
     public float deathTime = 5;
-    [ColorUsage(true, true)] public Color juiceColor;
+    public Texture2D piecesTexture;
+    [ColorUsage(true, true)] public Color piecesColor = new Color(255f, 255f, 255f, 1f);
+    public float piecesSize = 1;
+    public Texture2D bleedTexture;
+    [ColorUsage(true, true)] public Color juiceColor = new Color(255f, 255f, 255f, 1f);
     public float bleedIntencity = 1;
-    public float slicesGravity = 10;
-    public float slicesScatter = 20;
+
+    // Параметры
+    public Transform[] primeterSlices;
+    public Transform[] coreSlices;
 
     // Служебные переменные
-    int health;
-    List<Transform> slicesTransforms;
-    List<Transform> coresTransforms;
-    Texture2D texture;
     static GameObject m_bleedPrefab;
     static GameObject m_piesesPrefab;
+    static float m_slicesGravity;
+    static float m_slicesScatter;
+    static float m_slicesMaxRotation;
+    static float m_slicesScale;
     static Image m_playerHpBar;
     static Text m_playerHpText;
-    Image hpBar;
-    Text hpText;
+    int m_health;
+    Image m_hpBar;
+    Text m_hpText;
 
     // Запускается при старте
     void Start()
     {
         if (GetComponent<Player>())
         {
-            hpBar = m_playerHpBar;
-            hpText = m_playerHpText;
-            if (hpText) hpText.text = maxHealth.ToString();
+            m_hpBar = m_playerHpBar;
+            m_hpText = m_playerHpText;
+            if (m_hpText) m_hpText.text = maxHealth.ToString();
         }
-        health = maxHealth;
-
-        slicesTransforms = new List<Transform>();
-        Transform slices = transform.Find("Skin")?.Find("slices");
-        if (slices)
-        {
-            slices.GetComponentsInChildren(false, slicesTransforms);
-            slicesTransforms.Remove(slices);
-        }
-
-        coresTransforms = new List<Transform>();
-        Transform cores = transform.Find("Skin")?.Find("core_body");
-        if (cores)
-        {
-            cores.GetComponentsInChildren(false, coresTransforms);
-            coresTransforms.Remove(cores);
-        }
-
-        texture = coresTransforms[0].GetComponent<SpriteRenderer>().sprite.texture;
+        m_health = maxHealth;
     }
 
     // Инициализация префабов эффектов
-    public static void Set(GameObject bleedPrefab, GameObject piesesPrefab, Image playerHpBar, Text playerHpText)
+    public static void Set(GameObject bleedPrefab, GameObject piesesPrefab, float slicesGravity, float slicesScatter, float slicesMaxRotation, float slicesScale, Image playerHpBar, Text playerHpText)
     {
         m_bleedPrefab = bleedPrefab;
         m_piesesPrefab = piesesPrefab;
+        m_slicesGravity = slicesGravity;
+        m_slicesScatter = slicesScatter;
+        m_slicesMaxRotation = slicesMaxRotation;
+        m_slicesScale = slicesScale;
         m_playerHpBar = playerHpBar;
         m_playerHpText = playerHpText;
     }
@@ -79,14 +75,20 @@ public class Health : MonoBehaviour
             GameObject curObj = Instantiate(m_piesesPrefab, piecesPoint, Quaternion.identity);
 
             // Восстановление масштаба
-            ParticleSystem ps = curObj.GetComponent<ParticleSystem>();
-            ParticleSystem.ShapeModule shape = ps.shape;
-            shape.texture = texture;
-
-            // Определение свойств частиц
             Vector3 scale = curObj.transform.localScale;
             curObj.transform.parent = transform;
             curObj.transform.localScale = scale;
+
+            // Определение свойств частиц
+            ParticleSystem ps = curObj.GetComponent<ParticleSystem>();
+            ParticleSystem.MainModule main = ps.main;
+            main.startSize = new ParticleSystem.MinMaxCurve(main.startSize.constantMin, main.startSize.constantMax * piecesSize);
+            main.startColor = piecesColor;
+            if (piecesTexture)
+            {
+                ParticleSystem.ShapeModule shape = ps.shape;
+                shape.texture = piecesTexture;
+            }
         }
         // Эффект сокотечения
         if (m_bleedPrefab)
@@ -101,8 +103,13 @@ public class Health : MonoBehaviour
             // Определение свойств частиц
             ParticleSystem ps = curObj.GetComponent<ParticleSystem>();
             ParticleSystem.MainModule main = ps.main;
-            main.startColor = juiceColor;
             main.startSize = new ParticleSystem.MinMaxCurve(main.startSize.constantMin, main.startSize.constantMax * bleedIntencity);
+            main.startColor = juiceColor;
+            if (bleedTexture)
+            {
+                ParticleSystem.ShapeModule shape = ps.shape;
+                shape.texture = bleedTexture;
+            }
         }
     }
 
@@ -111,13 +118,16 @@ public class Health : MonoBehaviour
     {
         Transform nearest = null;
         float minDistance = float.MaxValue;
-        foreach (Transform child in slicesTransforms)
+        foreach (Transform slice in primeterSlices)
         {
-            float distance = (child.position - point).magnitude;
-            if (distance < minDistance)
+            if (slice)
             {
-                minDistance = distance;
-                nearest = child;
+                float distance = (slice.position - point).magnitude;
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    nearest = slice;
+                }
             }
         }
         Vector3 position;
@@ -125,9 +135,8 @@ public class Health : MonoBehaviour
         {
             Debug.DrawLine(point, nearest.position, Color.yellow, 5f); // Указывание на отделяемый фрагмент
             nearest.position = new Vector3(nearest.position.x, nearest.position.y, nearest.position.z - 1);
-            tearPiece(nearest.gameObject);
-
             position = nearest.position;
+            tearPiece(nearest.gameObject);
         }
         else
         {
@@ -142,15 +151,29 @@ public class Health : MonoBehaviour
         Rigidbody2D nearestRigidBody = piece.GetComponent<Rigidbody2D>();
 
         piece.transform.parent = null;
+        piece.transform.localScale = piece.transform.localScale * m_slicesScale;
         if (!nearestRigidBody)
         {
             nearestRigidBody = piece.AddComponent<Rigidbody2D>();
         }
-        nearestRigidBody.gravityScale = slicesGravity;
-        nearestRigidBody.AddForce(Random.insideUnitCircle.normalized * slicesScatter, ForceMode2D.Impulse);
-        slicesTransforms.Remove(piece.transform);
+        nearestRigidBody.gravityScale = m_slicesGravity;
+        nearestRigidBody.AddForce(Random.insideUnitCircle.normalized * m_slicesScatter, ForceMode2D.Impulse);
+        nearestRigidBody.AddTorque((Random.value - 0.5f) * m_slicesMaxRotation, ForceMode2D.Impulse);
 
-        
+        for (int i = 0; i < primeterSlices.Length; i++)
+        {
+            if (primeterSlices[i] == piece)
+            {
+                primeterSlices[i] = null;
+            }
+        }
+        for (int i = 0; i < coreSlices.Length; i++)
+        {
+            if (coreSlices[i] == piece)
+            {
+                coreSlices[i] = null;
+            }
+        }
 
         Destroy(piece, deathTime);
     }
@@ -162,37 +185,42 @@ public class Health : MonoBehaviour
         {
             playDamageEffects(point, tearPiece(point));
         }
-        health -= damage;
-        if (health <= 0)
+        if (!isImmortal)
         {
-            health = 0;
-            death();
-        }
-        else if (health > maxHealth)
-        {
-            health = maxHealth;
-        }
-        if (hpBar)
-        {
-            hpBar.fillAmount = (float)health / maxHealth;
-        }
-        if (hpText)
-        {
-            hpText.text = health.ToString();
+            m_health -= damage;
+            if (m_health <= 0)
+            {
+                m_health = 0;
+                death();
+            }
+            else if (m_health > maxHealth)
+            {
+                m_health = maxHealth;
+            }
+            if (m_hpBar)
+            {
+                m_hpBar.fillAmount = (float)m_health / maxHealth;
+            }
+            if (m_hpText)
+            {
+                m_hpText.text = m_health.ToString();
+            }
         }
     }
 
     // Смерть персонажа
     void death()
     {
-        List<Transform> objectsTransforms = new List<Transform>();
-        gameObject.GetComponentsInChildren(false, objectsTransforms);
-        foreach (Transform objectTransform in objectsTransforms)
+        for (int i = primeterSlices.Length - 1; i >= 0; i--)
         {
-            tearPiece(objectTransform.gameObject);
+            if (primeterSlices[i])
+                tearPiece(primeterSlices[i].gameObject);
         }
-        //Animator animator = GetComponent<Animator>();
-        //if (animator) animator.enabled = false;
+        for (int i = coreSlices.Length - 1; i >= 0; i--)
+        {
+            if (coreSlices[i])
+                tearPiece(coreSlices[i].gameObject);
+        }
         Destroy(gameObject);
     }
 }
